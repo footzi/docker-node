@@ -1,0 +1,54 @@
+version: '3.3'
+
+services:
+  server:
+    container_name: server
+    build: ./server
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - ./server:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    stdin_open: true
+    tty: true
+
+  client:
+    container_name: client
+    build: ./client
+    restart: always
+    volumes:
+      - ./client:/app
+    ports:
+      - "8000:8000"
+
+  db:
+    container_name: pg_container
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: test
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    stdin_open: false
+    tty: false
+
+  pgadmin:
+    container_name: pgadmin_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+    stdin_open: false
+    tty: false
+
